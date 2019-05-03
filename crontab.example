@@ -1,0 +1,5 @@
+# This should be different times for each node (i.e. 7,19 or 8,20)
+0  7,19 * * *      root    sudo nodetool repair
+
+0  0    * * *      root    /root/backup-full.sh
+0  2-22/2  * * *   root    /root/backup-incremental.sh
