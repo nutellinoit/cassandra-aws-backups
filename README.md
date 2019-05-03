@@ -1,6 +1,6 @@
-Cassandra Backup and Restore with Google Cloud Storage
+Cassandra Backup and Restore with AWS S3
 ====================
-Shell script for creating and managing Cassandra Backups using Google Cloud Storage.
+Shell script for creating and managing Cassandra Backups using AWS S3
 ## Features
 - Take snapshot backups
 - Copy Incremental backup files
@@ -9,8 +9,8 @@ Shell script for creating and managing Cassandra Backups using Google Cloud Stor
 - Execute Dry Run mode to identify target files
 
 ## Requirements
-Google Cloud SDK installed with `aws s3` utility configured for authentication to 
-An existing Google Cloud Storage bucket 
+AWS S3 installed with `aws s3` utility configured for authentication to 
+An existing AWS S3 bucket 
 Linux system with BASH shell. 
 Cassandra 2+
 
@@ -36,11 +36,11 @@ Cassandra 2+
 
  ` ./cassandra-cloud-backup.sh -b s3://cass-bk123/backups/host01/snpsht/2016-01-20_18-57/ -fk -d /var/lib/cassandra/backups restore`
 
-  - List inventory of available backups stored in Google Cloud Store
+  - List inventory of available backups stored in AWS S3
 
  ` ./cassandra-cloud-backup.sh -b s3://cass-bk123 inventory`
  
-  - List inventory of available backups stored in Google Cloud Store for a different server
+  - List inventory of available backups stored in AWS S3 for a different server
 
  ` ./cassandra-cloud-backup.sh -b s3://cass-bk123 inventory -a testserver01`
 
@@ -63,7 +63,7 @@ Cassandra 2+
     Default action is to take a backup
 
   -b, --awsbucket
-   Google Cloud Storage bucket used in deployment and by the cluster.
+   AWS S3 bucket used in deployment and by the cluster.
 
   -c, --clear-old-ss
     Clear any old SnapShots taken prior to this backup run to save space
@@ -95,7 +95,7 @@ Cassandra 2+
     be run when compression is enabled with -z or -j
 
   -j, --bzip
-    Compresses the backup files with bzip2 prior to pushing to Google Cloud Storage
+    Compresses the backup files with bzip2 prior to pushing to AWS S3
     This option will use additional local disk space set the --target-gz-dir
     to use an alternate disk location if free space is an issue
 
@@ -147,7 +147,7 @@ Cassandra 2+
     default: /etc/cassandra/cassandra.yaml
 
   -z, --zip
-    Compresses the backup files with gzip prior to pushing to Google Cloud Storage
+    Compresses the backup files with gzip prior to pushing to AWS S3
     This option will use additional local disk space set the --target-gz-dir
     to use an alternate disk location if free space is an issue
 
