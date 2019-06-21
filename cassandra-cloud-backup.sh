@@ -279,7 +279,7 @@ function validate() {
         logerror "Cannot parse data_directories from ${YAML_FILE} and --home-dir argument" \
         " is missing, which should be the \$CASSANDRA_HOME path"
       else
-        data_file_directories="${CASS_HOME}/data/data"
+        data_file_directories="${CASS_HOME}/data"
       fi
     fi 
     if ${INCLUDE_COMMIT_LOGS}; then
@@ -290,7 +290,7 @@ function validate() {
         logerror "Cannot parse commitlog_directory from ${YAML_FILE} and --home-dir argument" \
         " is missing, which should be the \$CASSANDRA_HOME path"
       else
-        commitlog_directory="${CASS_HOME}/data/commitlog"
+        commitlog_directory="${CASS_HOME}/commitlog"
       fi
     fi
     if [ ! -d ${commitlog_directory} ]; then
@@ -304,7 +304,7 @@ function validate() {
         logerror "Cannot parse saved_caches_directory from ${YAML_FILE} and --home-dir argument" \
         " is missing, which should be the \$CASSANDRA_HOME path"
       else
-        saved_caches_directory="${CASS_HOME}/data/saved_caches"
+        saved_caches_directory="${CASS_HOME}/saved_caches"
       fi
     fi 
     if [ ! -d ${saved_caches_directory} ]; then
