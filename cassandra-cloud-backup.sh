@@ -329,7 +329,7 @@ function validate() {
       logerror "The tar and nice utilities must be present to win."
     fi
     if [ ${ACTION} = "restore" ]; then
-      AWS_LS=$(${AWSCLI} s3 ls ${AWS_BUCKET} | head -n1)
+      AWS_LS=$(${AWSCLI} s3 ls ${AWS_BUCKET}/ | head -n1)
       loginfo "AWS first file listed: ${AWS_LS}"
       if  grep -q 'incr' <<< "${AWS_LS}"; then
         loginfo "Detected incremental backup requested for restore. This script " \
