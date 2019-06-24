@@ -703,7 +703,9 @@ function copy_other_files() {
   if ${INCLUDE_CACHES}; then
     find "${saved_caches_directory}" -type f >> "${TARGET_LIST_FILE}"
   fi
-  echo "${YAML_FILE}" >> "${TARGET_LIST_FILE}"
+  if ${INCLUDE_CONFIG}; then
+    echo "${YAML_FILE}" >> "${TARGET_LIST_FILE}"
+  fi
 }
 
 # Since incrementals are automatically created as needed
@@ -1135,11 +1137,12 @@ for arg in "$@"; do
     "--with-caches")   set -- "$@" "-w" ;;
     "--yaml")   set -- "$@" "-y" ;;
     "--zip")   set -- "$@" "-z" ;;
+    "--backup-config")   set -- "$@" "-x" ;;
     *)        set -- "$@" "$arg"
   esac
 done
 
-while getopts 'a:b:BcCd:DfhH:iIjkl:LnN:p:rs:S:T:u:U:vwy:z' OPTION
+while getopts 'a:b:BcCd:DfhH:iIjkl:LnN:p:rs:S:T:u:U:vwy:zx:' OPTION
 do
   case $OPTION in
       a)
@@ -1239,6 +1242,9 @@ do
           TAR_CFLAG="-z"
           TAR_EXT="tgz"
           ;;
+      x)
+          INCLUDE_CONFIG=${OPTARG}
+          ;;
       ?)
           print_help
           ;;
@@ -1268,6 +1274,7 @@ AWSCLI="$(which aws)" #which aws script
 HOSTNAME=${HOSTNAME:-"$(hostname)"} #used for aws backup location
 INCLUDE_CACHES=${INCLUDE_CACHES:-false} #include the saved caches for posterity
 INCLUDE_COMMIT_LOGS=${INCLUDE_COMMIT_LOGS:-false} #include the commit logs for extra safety
+INCLUDE_CONFIG=${INCLUDE_CONFIG:-true} #include the config files on backup
 INCREMENTAL=${INCREMENTAL:-false}  # flag to indicate only incremental files
 KEEP_OLD_FILES=${KEEP_OLD_FILES:-false}
 LOG_DIR=${LOG_DIR:-/var/log/cassandra} #where to write the log files
