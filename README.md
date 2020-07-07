@@ -1,4 +1,4 @@
-Cassandra Backup and Restore with AWS S3
+Cassandra Backup and Restore (optionally with AWS S3)
 ====================
 Shell script for creating and managing Cassandra Backups using AWS S3
 ## Features
@@ -9,40 +9,41 @@ Shell script for creating and managing Cassandra Backups using AWS S3
 - Execute Dry Run mode to identify target files
 
 ## Requirements
-AWS S3 installed with `aws s3` utility configured for authentication to 
+
+- (optional) AWS S3 installed with `aws s3` utility configured for authentication to 
 An existing AWS S3 bucket 
-Linux system with BASH shell. 
-Cassandra 2+
+- Linux system with BASH shell. 
+- Cassandra 2+
 
 
 ## Usage
-./cassandra-cloud-backup.sh [ options ] < command> 
+./cassandra-backup.sh [ options ] < command> 
 
 ### Examples
   - Take a full snapshot, gzip compress it with nice level 15,  use the /var/lib/cassandra/backups directory to stage the backup before
   uploading it to the GCS Bucket, and clear old incremental and snapshot files
 
- `./cassandra-cloud-backup.sh -b s3://cassandra-backups123/ -zCc -N 15 -d /var/lib/cassandra/backups backup`
+ `./cassandra-backup.sh -b s3://cassandra-backups123/ -zCc -N 15 -d /var/lib/cassandra/backups backup`
 
   - Do a dry run of a full snapshot with verbose output and create list of files that would have been copied
 
-  `./cassandra-cloud-backup.sh -b s3://cassandra-backups123/ -vn backup`
+  `./cassandra-backup.sh -b s3://cassandra-backups123/ -vn backup`
 
   - Backup and bzip2 compress copies of the most recent incremental backup files since the last incremental backup
 
-`  ./cassandra-cloud-backup.sh -b s3://cassandra-backups123/ -ji -d /var/lib/cassandra/backups backup`
+`  ./cassandra-backup.sh -b s3://cassandra-backups123/ -ji -d /var/lib/cassandra/backups backup`
 
   - Restore a backup without prompting from given bucket path and keep the old files locally
 
- ` ./cassandra-cloud-backup.sh -b s3://cass-bk123/backups/host01/snpsht/2016-01-20_18-57/ -fk -d /var/lib/cassandra/backups restore`
+ ` ./cassandra-backup.sh -b s3://cass-bk123/backups/host01/snpsht/2016-01-20_18-57/ -fk -d /var/lib/cassandra/backups restore`
 
   - List inventory of available backups stored in AWS S3
 
- ` ./cassandra-cloud-backup.sh -b s3://cass-bk123 inventory`
+ ` ./cassandra-backup.sh -b s3://cass-bk123 inventory`
  
   - List inventory of available backups stored in AWS S3 for a different server
 
- ` ./cassandra-cloud-backup.sh -b s3://cass-bk123 inventory -a testserver01`
+ ` ./cassandra-backup.sh -b s3://cass-bk123 inventory -a testserver01`
 
 ### Commands:
 
@@ -155,11 +156,11 @@ Cassandra 2+
 ###Cron Examples
 - Full gzip compressed snapshot every day at 1:30 am with nice level 10
 
-`30 1 * * * /path_to_scripts/cassandra-cloud-backup.sh -z -N10 -b s3://cass-bk123-vCcj -d /var/lib/cassandra/backups > /var/log/cassandra/$(date +\%Y\%m\%d\%H\%M\%S)-fbackup.log 2>&1`
+`30 1 * * * /path_to_scripts/cassandra-backup.sh -z -N10 -b s3://cass-bk123-vCcj -d /var/lib/cassandra/backups > /var/log/cassandra/$(date +\%Y\%m\%d\%H\%M\%S)-fbackup.log 2>&1`
 
 - Incremental gzip compressed backups copied every hour nice level 10
 
-`0 * * * * /path_to_scripts/cassandra-cloud-backup.sh -b -N10 s3://cass-bk123 -vjiz -d /var/lib/cassandra/backups > /var/log/cassandra/$(date +\%Y\%m\%d\%H\%M\%S)-ibackup.log 2>&1`
+`0 * * * * /path_to_scripts/cassandra-backup.sh -b -N10 s3://cass-bk123 -vjiz -d /var/lib/cassandra/backups > /var/log/cassandra/$(date +\%Y\%m\%d\%H\%M\%S)-ibackup.log 2>&1`
 
 ### Notes
 
@@ -179,3 +180,10 @@ In order to enable incremental backups, the `incremental_backups` option has to 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License.
 
 This is not an official Google product.
+
+
+### Other
+
+```bash
+./cassandra-backup.sh  -zCc -N 15 -d /data/cassandra/automatic_backups backup -y /etc/cassandra/conf/cassandra.yaml -H /data/cassandra/ -u cassandra -p cassandra -k true
+```

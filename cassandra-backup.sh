@@ -55,7 +55,7 @@ Flags:
     Default action is to take a backup
 
   -b, --awsbucket
-   AWS Cloud Storage bucket used in deployment and by the cluster.
+   AWS Cloud Storage bucket used in deployment and by the cluster. (optional)
 
   -c, --clear-old-ss
     Clear any old SnapShots taken prior to this backup run to save space
@@ -246,20 +246,20 @@ function validate() {
   set_auth_string
   verbose_vars
   loginfo "***************VALIDATING INPUT******************"
-  if [ -z ${AWSCLI} ]; then
-    logerror "Cannot find awscli utility please make sure it is in the PATH"
-    exit 1
-  fi
-  if [ -z ${AWS_BUCKET} ]; then
-      logerror "Please pass in the AWS Bucket to use with this script"
-      exit 1
-  else
-      if ! ${AWSCLI} s3 ls ${AWS_BUCKET} &> /dev/null; then
-        logerror "Cannot access AWS Cloud Storage bucket ${AWS_BUCKET} make sure" \
-        " it exists"
-        exit 1
-      fi
-  fi
+  #if [ -z ${AWSCLI} ]; then
+  #  logerror "Cannot find awscli utility please make sure it is in the PATH"
+  #  exit 1
+  #fi
+  #if [ -z ${AWS_BUCKET} ]; then
+  #    logerror "Please pass in the AWS Bucket to use with this script"
+  #    exit 1
+  #else
+  #    if ! ${AWSCLI} s3 ls ${AWS_BUCKET} &> /dev/null; then
+  #      logerror "Cannot access AWS Cloud Storage bucket ${AWS_BUCKET} make sure" \
+  #      " it exists"
+  #      exit 1
+  #    fi
+  #fi
   if [ ${ACTION} != "inventory" ]; then
     if [ -z ${NODETOOL} ]; then
       logerror "Cannot find nodetool utility please make sure it is in the PATH"
@@ -536,7 +536,9 @@ function backup() {
   else
     archive_compress
   fi
-  copy_to_aws
+
+  #copy_to_aws
+
   save_last_inc_backup_time
   backup_cleanup
   if ${CLEAR_INCREMENTALS}; then
@@ -552,7 +554,7 @@ function parse_yaml_backup() {
           'saved_caches_directory' \
           'incremental_backups' \
           'native_transport_port' \
-          'rpc_address')
+          'listen_address')
   parse_yaml ${YAML_FILE}
 }
 
@@ -666,7 +668,7 @@ function take_snapshot() {
 # Export the whole schema for safety
 function export_schema() {
   loginfo "Exporting Schema to ${SCHEMA_DIR}/${DATE}-schema.cql"
-  local cqlsh_host=${rpc_address:-$CQLSH_DEFAULT_HOST}
+  local cqlsh_host=${listen_address:-$CQLSH_DEFAULT_HOST}
   local cmd
   cmd="${CQLSH} ${cqlsh_host} ${native_transport_port} ${USER_OPTIONS} -e 'DESC SCHEMA;'"
   if ${DRY_RUN}; then
@@ -1264,7 +1266,7 @@ DOWNLOAD_ONLY=${DOWNLOAD_ONLY:-false} #user flag or used if incremental restore 
 DRY_RUN=${DRY_RUN:-false} #flag to only print what would have executed
 ERROR_COUNT=0 #used in validation step will exit if > 0
 FORCE_RESTORE=${FORCE_RESTORE:-false} #flag to bypass restore confirmation prompt
-AWSCLI="$(which aws)" #which aws script
+#AWSCLI="$(which aws)" #which aws script
 HOSTNAME=${HOSTNAME:-"$(hostname)"} #used for aws backup location
 INCLUDE_CACHES=${INCLUDE_CACHES:-false} #include the saved caches for posterity
 INCLUDE_COMMIT_LOGS=${INCLUDE_COMMIT_LOGS:-false} #include the commit logs for extra safety
